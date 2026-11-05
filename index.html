@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nova AI - All in One AI Assistant</title>
+
+<style>
+:root {
+ --bg:#f4f7fb;
+ --panel:#ffffff;
+ --text:#172033;
+ --muted:#778399;
+ --accent:#087fca;
+ --accent2:#075fa1;
+ --border:#e5eaf2;
+ --user:#e7f3ff;
+ --bot:#f5f7fa;
+ --shadow:0 8px 30px rgba(20,40,80,.07);
+}
+body.dark {
+ --bg:#0b1220;
+ --panel:#121e30;
+ --text:#eaf1fc;
+ --muted:#9baac0;
+ --accent:#35a9ed;
+ --accent2:#1688cc;
+ --border:#26364d;
+ --user:#183958;
+ --bot:#1a293e;
+ --shadow:0 8px 30px rgba(0,0,0,.2);
+}
+* {
+ box-sizing:border-box;
+ margin:0;
+ padding:0;
+}
+body {
+ font-family:Inter,Arial,sans-serif;
+ background:var(--bg);
+ color:var(--text);
+ height:100vh;
+ overflow:hidden;
+}
+button,select,textarea,input {
+ font-family:inherit;
+}
+button {cursor:pointer}
+.app {
+ display:flex;
+ height:100vh;
+}
+.sidebar {
+ width:270px;
+ background:var(--panel);
+ border-right:1px solid var(--border);
+ padding:18px;
+ display:flex;
+ flex-direction:column;
+ gap:15px;
+ transition:.3s;
+ z-index:50;
+}
+.brand {
+ display:flex;
+ align-items:center;
+ gap:11px;
+ padding:8px 2px 20px;
+}
+.brand-icon {
+ width:43px;
+ height:43px;
+ border-radius:14px;
+ background:linear-gradient(135deg,#087fca,#31c5c0);
+ color:white;
+ display:grid;
+ place-items:center;
+ font-size:23px;
+ font-weight:bold;
+ box-shadow:0 5px 15px #087fca40;
+}
+.brand-name {
+ font-size:22px;
+ font-weight:800;
+ letter-spacing:-.7px;
+}
+.brand-sub {
+ font-size:10px;
+ color:var(--muted);
+ margin-top:3px;
+}
+.side-btn {
+ width:100%;
+ padding:12px;
+ border-radius:11px;
+ background:var(--bg);
+ color:var(--text);
+ border:1px solid var(--border);
+ text-align:left;
+ font-size:13px;
+ transition:.2s;
+}
+.side-btn:hover {
+ border-color:var(--accent);
+ color:var(--accent);
+ transform:translateY(-1px);
+}
+.side-primary {
+ background:linear-gradient(120deg,#087fca,#16a5bd);
+ color:white;
+ border:none;
+ font-weight:bold;
+}
+.side-primary:hover {color:white;opacity:.9}
+.section-label {
+ font-size:10px;
+ letter-spacing:1.3px;
+ color:var(--muted);
+ font-weight:bold;
+ margin:8px 0 3px;
+}
+.history-list {
+ overflow-y:auto;
+ flex:1;
+}
+.history-item {
+ padding:11px;
+ font-size:12px;
+ border-radius:9px;
+ cursor:pointer;
+ white-space:nowrap;
+ overflow:hidden;
+ text-overflow:ellipsis;
+ margin:3px 0;
+ color:var(--muted);
+}
+.history-item:hover,.history-item.active {
+ background:var(--bg);
+ color:var(--accent);
+}
+.sidebar-bottom {
+ border-top:1px solid var(--border);
+ padding-top:12px;
+ display:grid;
+ gap:8px;
+}
+.main {
+ flex:1;
+ min-width:0;
+ display:flex;
+ flex-direction:column;
+}
+.topbar {
+ height:68px;
+ background:var(--panel);
+ border-bottom:1px solid var(--border);
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ padding:0 22px;
+}
+.top-left,.top-right {
+ display:flex;
+ align-items:center;
+ gap:11px;
+}
+.page-title {
+ font-weight:750;
+ font-size:15px;
+}
+.status {
+ font-size:10px;
+ color:#16a77e;
+ background:#16a77e16;
+ padding:5px 9px;
+ border-radius:20px;
+}
+.model-select {
+ padding:10px 12px;
+ border:1px solid var(--border);
+ border-radius:10px;
+ background:var(--bg);
+ color:var(--text);
+ outline:none;
+ max-width:210px;
+ font-size:12px;
+}
+.icon-btn {
+ background:var(--bg);
+ color:var(--text);
+ border:1px solid var(--border);
+ padding:9px 11px;
+ border-radius:10px;
+ font-size:17px;
+}
+.mobile-menu {display:none}
+.chat-area {
+ flex:1;
+ overflow-y:auto;
+ padding:25px 15px;
+ scroll-behavior:smooth;
+}
+.welcome {
+ max-width:850px;
+ margin:48px auto 25px;
+ text-align:center;
+}
+.hero-icon {
+ width:80px;
+ height:80px;
+ margin:auto auto 20px;
+ border-radius:25px;
+ display:grid;
+ place-items:center;
+ color:white;
+ font-size:38px;
+ background:linear-gradient(135deg,#087fca,#23b6b0);
+ box-shadow:0 12px 30px #087fca35;
+}
+.welcome h1 {
+ font-size:34px;
+ letter-spacing:-1px;
+ margin-bottom:12px;
+}
+.gradient-text {
+ background:linear-gradient(90deg,#087fca,#18b4a2);
+ -webkit-background-clip:text;
+ background-clip:text;
+ color:transparent;
+}
+.welcome p {
+ color:var(--muted);
+ line-height:1.7;
+ font-size:14px;
+ max-width:620px;
+ margin:auto;
+}
+.quick-title {
+ margin:30px 0 13px;
+ font-size:12px;
+ color:var(--muted);
+ font-weight:bold;
+}
+.cards {
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:13px;
+ max-width:800px;
+ margin:auto;
+}
+.card {
+ background:var(--panel);
+ border:1px solid var(--border);
+ padding:17px;
+ border-radius:15px;
+ text-align:left;
+ cursor:pointer;
+ color:var(--text);
+ transition:.2s;
+ box-shadow:var(--shadow);
+}
+.card:hover {
+ transform:translateY(-3px);
+ border-color:var(--accent);
+}
+.card-icon {
+ font-size:22px;
+ margin-bottom:10px;
+}
+.card strong {
+ display:block;
+ font-size:13px;
+ margin-bottom:6px;
+}
+.card small {
+ color:var(--muted);
+ font-size:11px;
+ line-height:1.5;
+}
+.messages {
+ max-width:900px;
+ margin:auto;
+}
+.message {
+ display:flex;
+ gap:12px;
+ margin:20px 0;
+ align-items:flex-start;
+}
+.avatar {
+ width:36px;
+ min-width:36px;
+ height:36px;
+ display:grid;
+ place-items:center;
+ border-radius:12px;
+ color:white;
+ background:linear-gradient(135deg,#087fca,#18b5a4);
+ font-weight:bold;
+}
+.message.user .avatar {
+ background:#536e9c;
+}
+.message-content {
+ min-width:0;
+ max-width:calc(100% - 48px);
+ flex:1;
+}
+.message-name {
+ font-size:11px;
+ color:var(--muted);
+ margin-bottom:6px;
+ font-weight:bold;
+}
+.bubble {
+ padding:15px 17px;
+ border-radius:4px 14px 14px 14px;
+ background:var(--bot);
+ line-height:1.75;
+ font-size:14px;
+ white-space:pre-wrap;
+ overflow-wrap:anywhere;
+}
+.message.user .bubble {
+ background:var(--user);
+ border-radius:14px 4px 14px 14px;
+}
+.message-actions {
+ display:flex;
+ gap:8px;
+ margin-top:7px;
+}
+.mini-btn {
+ border:1px solid var(--border);
+ background:var(--panel);
+ color:var(--muted);
+ border-radius:7px;
+ padding:5px 9px;
+ font-size:10px;
+}
+.mini-btn:hover {color:var(--accent)}
+.input-section {
+ padding:12px 15px 16px;
+ background:var(--bg);
+}
+.input-box {
+ max-width:900px;
+ margin:auto;
+ background:var(--panel);
+ border:1px solid var(--border);
+ border-radius:17px;
+ padding:10px;
+ display:flex;
+ align-items:flex-end;
+ gap:9px;
+ box-shadow:var(--shadow);
+}
+#messageInput {
+ flex:1;
+ min-height:43px;
+ max-height:160px;
+ resize:none;
+ outline:none;
+ border:none;
+ padding:11px;
+ background:transparent;
+ color:var(--text);
+ font-size:14px;
+}
+.send-btn {
+ background:linear-gradient(120deg,#087fca,#16a5bd);
+ color:white;
+ border:none;
+ padding:12px 19px;
+ border-radius:11px;
+ font-weight:bold;
+}
+.send-btn:disabled {opacity:.5}
+.input-info {
+ max-width:900px;
+ margin:8px auto 0;
+ display:flex;
+ justify-content:space-between;
+ gap:10px;
+ color:var(--muted);
+ font-size:10px;
+}
+.typing {
+ max-width:900px;
+ margin:10px auto;
+ color:var(--muted);
+ font-size:12px;
+}
+.modal {
+ display:none;
+ position:fixed;
+ inset:0;
+ z-index:100;
+ background:#0009;
+ align-items:center;
+ justify-content:center;
+ padding:15px;
+}
+.modal-content {
+ width:100%;
+ max-width:450px;
+ background:var(--panel);
+ border:1px solid var(--border);
+ border-radius:18px;
+ padding:24px;
+ box-shadow:var(--shadow);
+ max-height:90vh;
+ overflow-y:auto;
+}
+.modal-content h2 {margin-bottom:15px}
+.modal-content label {
+ display:block;
+ margin:14px 0 7px;
+ font-size:12px;
+ color:var(--muted);
+}
+.modal-content input:not([type=checkbox]) {
+ width:100%;
+ padding:12px;
+ border:1px solid var(--border);
+ border-radius:9px;
+ background:var(--bg);
+ color:var(--text);
+ outline:none;
+}
+.modal-content input:focus {border-color:var(--accent)}
+.modal-actions {
+ display:flex;
+ gap:10px;
+ margin-top:18px;
+}
+.primary-btn,.secondary-btn {
+ flex:1;
+ padding:11px;
+ border-radius:9px;
+ border:none;
+}
+.primary-btn {
+ background:var(--accent);
+ color:white;
+}
+.secondary-btn {
+ background:var(--bg);
+ color:var(--text);
+ border:1px solid var(--border);
+}
+.note {
+ color:var(--muted);
+ font-size:11px;
+ line-height:1.6;
+ margin-top:14px;
+}
+.toast {
+ position:fixed;
+ bottom:25px;
+ left:50%;
+ transform:translateX(-50%);
+ background:#172033;
+ color:white;
+ padding:11px 18px;
+ border-radius:10px;
+ font-size:12px;
+ display:none;
+ z-index:200;
+}
+@media(max-width:850px) {
+ .cards {grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:700px) {
+ .sidebar {
+  position:fixed;
+  top:0;
+  bottom:0;
+  left:-285px;
+  height:100%;
+ }
+ .sidebar.open {left:0}
+ .mobile-menu {display:block}
+ .topbar {padding:0 10px}
+ .page-title {font-size:12px}
+ .status {display:none}
+ .model-select {max-width:125px;font-size:10px}
+ .welcome {margin-top:35px}
+ .welcome h1 {font-size:27px}
+ .cards {grid-template-columns:1fr 1fr;gap:9px}
+ .card {padding:12px}
+ .chat-area {padding:15px 9px}
+ .bubble {font-size:13px;padding:12px}
+ .input-info {font-size:9px}
+}
+@media(max-width:380px) {
+ .cards {grid-template-columns:1fr}
+ .model-select {max-width:105px}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<aside class="sidebar" id="sidebar">
+
+ <div class="brand">
+  <div class="brand-icon">✦</div>
+  <div>
+   <div class="brand-name">Nova AI</div>
+   <div class="brand-sub">YOUR ALL-IN-ONE AI ASSISTANT</div>
+  </div>
+ </div>
+
+ <button class="side-btn side-primary" onclick="newChat()">＋ New Chat</button>
+
+ <div class="section-label">YOUR CONVERSATIONS</div>
+ <div class="history-list" id="historyList"></div>
+
+ <div class="sidebar-bottom">
+  <button class="side-btn" onclick="openSettings()">⚙ API Settings</button>
+  <button class="side-btn" onclick="toggleTheme()">◐ Appearance</button>
+  <button class="side-btn" onclick="clearAllChats()">🗑 Clear All Chats</button>
+ </div>
+
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+ <div class="top-left">
+  <button class="icon-btn mobile-menu" onclick="toggleSidebar()">☰</button>
+  <div>
+   <div class="page-title">Nova AI Assistant</div>
+   <div class="status">● AI SYSTEM READY</div>
+  </div>
+ </div>
+
+ <div class="top-right">
+  <select class="model-select" id="modelSelect">
+   <option value="openai/gpt-oss-120b">GPT OSS 120B</option>
+   <option value="openai/gpt-oss-20b">GPT OSS 20B</option>
+   <option value="qwen/qwen3.8-27b">Qwen 3.8 27B</option>
+  </select>
+  <button class="icon-btn" onclick="openSettings()">⚙</button>
+ </div>
+</header>
+
+<section class="chat-area" id="chatArea">
+
+ <div class="welcome" id="welcome">
+  <div class="hero-icon">✦</div>
+  <h1>Meet <span class="gradient-text">Nova AI</span></h1>
+  <p>
+   Your intelligent all-in-one AI assistant. Build websites,
+   write code, learn new skills, explore technology,
+   understand healthcare and get help with everyday questions.
+  </p>
+
+  <div class="quick-title">WHAT CAN I HELP YOU WITH TODAY?</div>
+
+  <div class="cards">
+
+   <button class="card" onclick="usePrompt('Mujhe ek professional website banani hai. Mujhe complete HTML, CSS aur JavaScript code do aur banane ka tarika bhi samjhao.')">
+    <div class="card-icon">🌐</div>
+    <strong>Website Development</strong>
+    <small>Complete websites, HTML, CSS, JavaScript and hosting guides.</small>
+   </button>
+
+   <button class="card" onclick="usePrompt('Mujhe Python mein ek professional calculator app ka complete code do aur samjhao.')">
+    <div class="card-icon">💻</div>
+    <strong>Programming & Coding</strong>
+    <small>Python, JavaScript, C++, Java and debugging help.</small>
+   </button>
+
+   <button class="card" onclick="usePrompt('Mujhe Android aur iPhone apps kaise banate hain? Pura process samjhao.')">
+    <div class="card-icon">📱</div>
+    <strong>Apps & Software</strong>
+    <small>App information, development and software guidance.</small>
+   </button>
+
+   <button class="card" onclick="usePrompt('Mujhe human heart ke bare mein simple Hindi mein medical information do.')">
+    <div class="card-icon">🏥</div>
+    <strong>Medical Assistant</strong>
+    <small>Health education, diseases, medicines and reports.</small>
+   </button>
+
+   <button class="card" onclick="usePrompt('Artificial Intelligence kya hai? Iske sabhi important uses samjhao.')">
+    <div class="card-icon">🤖</div>
+    <strong>AI & Technology</strong>
+    <small>Artificial intelligence, computers and technology.</small>
+   </button>
+
+   <button class="card" onclick="usePrompt('Mujhe photosynthesis class 10 ke level par Hindi mein samjhao.')">
+    <div class="card-icon">📚</div>
+    <strong>Study & Learning</strong>
+    <small>Maths, science, history and general knowledge.</small>
+   </button>
+
+  </div>
+ </div>
+
+ <div class="messages" id="messages"></div>
+ <div class="typing" id="typing" style="display:none;">✦ Nova AI is thinking...</div>
+
+</section>
+
+<section class="input-section">
+ <div class="input-box">
+  <textarea id="messageInput" rows="1" placeholder="Message Nova AI... Ask anything"></textarea>
+  <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send ➤</button>
+ </div>
+ <div class="input-info">
+  <span>Enter to send · Shift + Enter for new line</span>
+  <span>Powered by Groq AI</span>
+ </div>
+</section>
+
+</main>
+</div>
+
+<!-- SETTINGS -->
+
+<div class="modal" id="settingsModal">
+ <div class="modal-content">
+
+  <h2>⚙ API Settings</h2>
+
+  <label>Groq API Key</label>
+  <input type="password" id="apiKeyInput" placeholder="Enter your Groq API Key">
+
+  <label>
+   <input type="checkbox" id="showKey" style="width:auto">
+   Show API Key
+  </label>
+
+  <label>
+   <input type="checkbox" id="saveKey" style="width:auto">
+   Save API Key on this device
+  </label>
+
+  <div class="modal-actions">
+   <button class="primary-btn" onclick="saveAPIKey()">Save Key</button>
+   <button class="secondary-btn" onclick="removeAPIKey()">Remove Key</button>
+  </div>
+
+  <p class="note">
+   Important: This is a browser-only GitHub Pages application.
+   Your API key is sent from your browser directly to Groq.
+   Never publish your API key inside this HTML file.
+   For a public website, a secure backend proxy is recommended.
+  </p>
+
+  <div class="modal-actions">
+   <button class="secondary-btn" onclick="closeSettings()">Close</button>
+  </div>
+
+ </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+const API_URL = "https://api.groq.com/openai/v1/chat/completions";
+
+const SYSTEM_PROMPT = `
+You are Nova AI, a highly capable professional all-in-one AI assistant.
+
+Your job is to help users with a wide range of subjects, just like a
+general-purpose AI assistant.
+
+IMPORTANT AREAS:
+
+1. PROGRAMMING AND CODING
+- HTML, CSS, JavaScript, Python, Java, C, C++, PHP and SQL.
+- Explain programming concepts and algorithms.
+- Write complete working projects when requested.
+- Debug code and explain errors.
+- Create games, tools, utilities and web applications.
+- Provide complete code in one organized response when requested.
+- Include all necessary HTML, CSS and JavaScript.
+- Do not give incomplete fragments if the user asks for complete code.
+- Clearly explain where and how to run the code.
+- Mention dependencies and installation steps.
+- Do not claim code was tested unless it actually was.
+
+2. WEBSITE DEVELOPMENT
+- Explain how to create websites from scratch.
+- Create responsive professional website designs.
+- Explain GitHub Pages, repositories, index.html, hosting and deployment.
+- Help with domains, frontend, backend and databases.
+- Explain website security and API integration.
+- Give step-by-step instructions for beginners.
+
+3. MOBILE APPS AND SOFTWARE
+- Explain Android, iOS and desktop applications.
+- Explain app features, uses and development methods.
+- Help users understand app settings and troubleshooting.
+- Explain Flutter, React Native, Android Studio and other tools.
+- Do not invent current app features or prices.
+- Distinguish known facts from information that may have changed.
+
+4. MEDICAL AND HEALTHCARE
+- Human anatomy and physiology.
+- Diseases, symptoms and possible causes.
+- General medicine information, uses and common side effects.
+- Nutrition, vitamins, prevention and healthy habits.
+- Blood tests and laboratory reports.
+- First aid and basic healthcare education.
+- Explain when a qualified doctor should be consulted.
+
+MEDICAL SAFETY:
+- You are not a doctor and cannot confirm a diagnosis.
+- Never prescribe personalized medicine doses.
+- Never advise stopping or changing prescribed medicines.
+- Be extra careful with children, pregnancy and elderly people.
+- For serious emergencies, advise immediate medical care.
+- In India, emergency assistance is available at 112.
+
+5. EDUCATION AND KNOWLEDGE
+- Mathematics, science, physics, chemistry and biology.
+- History, geography, civics and general knowledge.
+- School and college-level explanations.
+- Solve problems step by step.
+- Do not invent facts.
+
+6. TECHNOLOGY AND AI
+- Artificial intelligence and machine learning.
+- Computers, mobile devices, internet and cybersecurity.
+- Explain apps, software, tools and technologies.
+- Help users learn new technical skills.
+
+7. WRITING AND CREATIVITY
+- Emails, letters, essays and reports.
+- Stories, poems, captions and scripts.
+- Translation and grammar.
+- Professional writing and editing.
+
+8. EVERYDAY CONVERSATION
+- Casual chat, jokes, ideas and everyday questions.
+- Understand informal language and respond naturally.
+- Do not unnecessarily lecture the user.
+
+RESPONSE QUALITY:
+- Be professional, friendly, clear and helpful.
+- Give complete answers with useful details.
+- When asked for code, provide complete copy-paste-ready code.
+- Put code in properly labeled code blocks.
+- Explain where to paste the code and how to run it.
+- For large projects, organize the code into sections.
+- When asked for a step-by-step guide, number the steps.
+- Do not pretend to browse the internet or access live information.
+- If you are unsure about the latest information, say so.
+
+LANGUAGE RULE:
+- Reply in the same language the user uses.
+- Hindi question = simple natural Hindi.
+- English question = English.
+- Mixed language = natural Hinglish is acceptable.
+- Never randomly switch to Spanish or another language.
+
+PERSONALITY:
+- Friendly, natural, intelligent and respectful.
+- If the user says "ye sab bakchodi mat kar yaar",
+  reply naturally, such as "ठीक है दोस्त! सीधे मुद्दे पर आते हैं।"
+- Give concise answers for simple questions.
+- Give detailed explanations when requested.
+
+Always answer the actual question and never fabricate facts.
+`;
+
+let chats = [];
+let currentChatId = null;
+let isSending = false;
+
+function getAPIKey() {
+ return sessionStorage.getItem("nova_api_key") ||
+        localStorage.getItem("nova_api_key") || "";
+}
+
+function showToast(message) {
+ const toast = document.getElementById("toast");
+ toast.textContent = message;
+ toast.style.display = "block";
+ setTimeout(() => toast.style.display = "none",2500);
+}
+
+function openSettings() {
+ document.getElementById("settingsModal").style.display = "flex";
+ document.getElementById("apiKeyInput").value = getAPIKey();
+}
+
+function closeSettings() {
+ document.getElementById("settingsModal").style.display = "none";
+}
+
+document.getElementById("showKey").addEventListener("change",function(){
+ document.getElementById("apiKeyInput").type =
+  this.checked ? "text" : "password";
+});
+
+function saveAPIKey() {
+ const key = document.getElementById("apiKeyInput").value.trim();
+ const save = document.getElementById("saveKey").checked;
+
+ if(!key) {
+  showToast("Please enter your Groq API Key.");
+  return;
+ }
+
+ sessionStorage.setItem("nova_api_key",key);
+
+ if(save) {
+  localStorage.setItem("nova_api_key",key);
+ } else {
+  localStorage.removeItem("nova_api_key");
+ }
+
+ showToast("API Key saved successfully!");
+ closeSettings();
+}
+
+function removeAPIKey() {
+ localStorage.removeItem("nova_api_key");
+ sessionStorage.removeItem("nova_api_key");
+ document.getElementById("apiKeyInput").value = "";
+ showToast("API Key removed.");
+}
+
+function loadChats() {
+ try {
+  chats = JSON.parse(localStorage.getItem("nova_chats")) || [];
+ } catch(e) {
+  chats = [];
+ }
+ renderHistory();
+}
+
+function saveChats() {
+ try {
+  localStorage.setItem("nova_chats",JSON.stringify(chats));
+ } catch(e) {
+  showToast("Storage full. Clear some old chats.");
+ }
+ renderHistory();
+}
+
+function newChat() {
+ currentChatId = null;
+ document.getElementById("messages").innerHTML = "";
+ document.getElementById("welcome").style.display = "block";
+ document.getElementById("sidebar").classList.remove("open");
+ renderHistory();
+ document.getElementById("messageInput").focus();
+}
+
+function renderHistory() {
+ const list = document.getElementById("historyList");
+ list.innerHTML = "";
+
+ chats.forEach(chat => {
+  const item = document.createElement("div");
+  item.className = "history-item" +
+   (chat.id === currentChatId ? " active" : "");
+  item.textContent = "💬 " + chat.title;
+  item.onclick = () => openChat(chat.id);
+  list.appendChild(item);
+ });
+}
+
+function openChat(id) {
+ const chat = chats.find(c => c.id === id);
+ if(!chat) return;
+
+ currentChatId = id;
+ document.getElementById("messages").innerHTML = "";
+ document.getElementById("welcome").style.display =
+  chat.messages.length ? "none" : "block";
+
+ chat.messages.forEach(msg => {
+  addMessage(msg.role,msg.content);
+ });
+
+ renderHistory();
+ document.getElementById("sidebar").classList.remove("open");
+ scrollToBottom();
+}
+
+function clearAllChats() {
+ if(!confirm("Delete all saved conversations?")) return;
+
+ chats = [];
+ currentChatId = null;
+ saveChats();
+ document.getElementById("messages").innerHTML = "";
+ document.getElementById("welcome").style.display = "block";
+ showToast("All chats deleted.");
+}
+
+function addMessage(role,content) {
+ const messages = document.getElementById("messages");
+
+ const row = document.createElement("div");
+ row.className = "message " + (role === "user" ? "user" : "assistant");
+
+ const avatar = document.createElement("div");
+ avatar.className = "avatar";
+ avatar.textContent = role === "user" ? "U" : "N";
+
+ const wrap = document.createElement("div");
+ wrap.className = "message-content";
+
+ const name = document.createElement("div");
+ name.className = "message-name";
+ name.textContent = role === "user" ? "YOU" : "NOVA AI";
+
+ const bubble = document.createElement("div");
+ bubble.className = "bubble";
+ bubble.textContent = content;
+
+ wrap.appendChild(name);
+ wrap.appendChild(bubble);
+
+ if(role === "assistant") {
+  const actions = document.createElement("div");
+  actions.className = "message-actions";
+
+  const copy = document.createElement("button");
+  copy.className = "mini-btn";
+  copy.textContent = "📋 Copy Response";
+  copy.onclick = () => copyText(content);
+
+  actions.appendChild(copy);
+  wrap.appendChild(actions);
+ }
+
+ row.appendChild(avatar);
+ row.appendChild(wrap);
+ messages.appendChild(row);
+
+ return bubble;
+}
+
+async function copyText(text) {
+ try {
+  await navigator.clipboard.writeText(text);
+  showToast("Copied successfully!");
+ } catch(e) {
+  const area = document.createElement("textarea");
+  area.value = text;
+  document.body.appendChild(area);
+  area.select();
+  document.execCommand("copy");
+  area.remove();
+  showToast("Copied!");
+ }
+}
+
+function scrollToBottom() {
+ const area = document.getElementById("chatArea");
+ area.scrollTop = area.scrollHeight;
+}
+
+function usePrompt(text) {
+ document.getElementById("messageInput").value = text;
+ sendMessage();
+}
+
+async function sendMessage() {
+ if(isSending) return;
+
+ const input = document.getElementById("messageInput");
+ const message = input.value.trim();
+
+ if(!message) return;
+
+ const apiKey = getAPIKey();
+
+ if(!apiKey) {
+  openSettings();
+  showToast("First add your Groq API Key.");
+  return;
+ }
+
+ if(!currentChatId) {
+  currentChatId = Date.now().toString();
+
+  chats.unshift({
+   id:currentChatId,
+   title:message.slice(0,38),
+   messages:[]
+  });
+ }
+
+ const chat = chats.find(c => c.id === currentChatId);
+ if(!chat) return;
+
+ isSending = true;
+ input.value = "";
+ input.style.height = "43px";
+
+ document.getElementById("welcome").style.display = "none";
+
+ chat.messages.push({role:"user",content:message});
+ addMessage("user",message);
+
+ const typing = document.getElementById("typing");
+ const sendBtn = document.getElementById("sendBtn");
+
+ typing.style.display = "block";
+ sendBtn.disabled = true;
+ sendBtn.textContent = "Thinking...";
+
+ saveChats();
+ scrollToBottom();
+
+ try {
+  const model = document.getElementById("modelSelect").value;
+
+  const apiMessages = [
+   {role:"system",content:SYSTEM_PROMPT},
+   ...chat.messages.map(m => ({
+    role:m.role,
+    content:m.content
+   }))
+  ];
+
+  const response = await fetch(API_URL,{
+   method:"POST",
+   headers:{
+    "Content-Type":"application/json",
+    "Authorization":"Bearer "+apiKey
+   },
+   body:JSON.stringify({
+    model:model,
+    messages:apiMessages,
+    temperature:0.7,
+    max_completion_tokens:4096
+   })
+  });
+
+  let data = {};
+  try {
+   data = await response.json();
+  } catch(e) {
+   throw new Error("Invalid response from Groq server.");
+  }
+
+  if(!response.ok) {
+   throw new Error(data?.error?.message || "API request failed.");
+  }
+
+  const answer = data?.choices?.[0]?.message?.content;
+
+  if(!answer) {
+   throw new Error("AI returned an empty response.");
+  }
+
+  chat.messages.push({
+   role:"assistant",
+   content:answer
+  });
+
+  addMessage("assistant",answer);
+  saveChats();
+
+ } catch(error) {
+  const errorText = "Error: " + error.message;
+
+  addMessage("assistant",errorText);
+
+  chat.messages.push({
+   role:"assistant",
+   content:errorText
+  });
+
+  saveChats();
+
+ } finally {
+  typing.style.display = "none";
+  sendBtn.disabled = false;
+  sendBtn.textContent = "Send ➤";
+  isSending = false;
+  input.focus();
+  scrollToBottom();
+ }
+}
+
+function toggleTheme() {
+ document.body.classList.toggle("dark");
+
+ localStorage.setItem(
+  "nova_theme",
+  document.body.classList.contains("dark") ? "dark" : "light"
+ );
+}
+
+function toggleSidebar() {
+ document.getElementById("sidebar").classList.toggle("open");
+}
+
+document.getElementById("messageInput").addEventListener("keydown",function(e){
+ if(e.key === "Enter" && !e.shiftKey) {
+  e.preventDefault();
+  sendMessage();
+ }
+});
+
+document.getElementById("messageInput").addEventListener("input",function(){
+ this.style.height = "43px";
+ this.style.height = Math.min(this.scrollHeight,160)+"px";
+});
+
+function initializeApp() {
+ if(localStorage.getItem("nova_theme") === "dark") {
+  document.body.classList.add("dark");
+ }
+
+ loadChats();
+
+ if(chats.length) {
+  openChat(chats[0].id);
+ } else {
+  newChat();
+ }
+}
+
+initializeApp();
+
+</script>
+</body>
+</html>
